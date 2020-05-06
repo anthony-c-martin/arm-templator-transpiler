@@ -109,6 +109,21 @@ resource azrm 'network/publicIpAddresses@2016-03-30' pip {
     }
 }
 
+// new/existing pattern
+resource azrm 'network/publicIpAddresses@2016-03-30' pip when (publicIp == new)  {
+    name: concat(namePrefix, i, '-pip1')
+    location: location
+    properties: {
+        publicIpAllocationMethod: 'Dynamic'
+        dnsSettings: {
+            domainNameLabel: if (dnsPrefix != null) { dnsPrefix } else { null }
+        }
+    }
+} else { // if I need to reference an existing resource instead
+    scope: "resouceGroupName" // or root path to resource
+    id: "storageAccountName"
+}
+
 if(publicIp){ // could combine more in the same loop
     resource azrm 'network/publicIpAddresses@2016-03-30' pip {
         name: concat(namePrefix, i, '-pip1')
