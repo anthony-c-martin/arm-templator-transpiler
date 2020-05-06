@@ -120,8 +120,8 @@ resource azrm 'network/publicIpAddresses@2016-03-30' pip when (publicIp == new) 
         }
     }
 } else { // if I need to reference an existing resource instead
-    scope: "resouceGroupName" // or root path to resource
-    id: "storageAccountName"
+    resourceScope: "resouceGroupName" // or root path to resource
+    name: "storageAccountName"
 }
 
 if(publicIp){ // could combine more in the same loop
