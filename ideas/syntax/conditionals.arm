@@ -25,6 +25,21 @@
     // but the type system should regard them as a union type, and ideally warn if accessed without a null check
     output ifTrueName: ifTrueAccount != null ? ifTrueAccount.name : null // can come up with a shorthand syntax e.g. null-conditional operator in future.
 
+/************************************/
+/* NEW or EXISTING PATTERNS         */
+/************************************/
+
+      resource azrm 'storage/storageAccounts@2015-06-15' diagStorageAccount {
+        name: diagStorageAccountName
+        location: input.location
+        properties: {
+          accountType: 'Standard_LRS'
+        }
+      } else {
+        //need some simple syntax for getting a reference to an existing resource
+        . = GetResource(storageResourceGroup, diagStorageAccountName)
+      }
+
 /* 2. require explicit assignment to outer scope (clunky, but somewhat consistent with looping ideas) */
     // condition produces a kvp of identifiers -> declarations.
     // identifiers reused in multiple branches will end up with a union type
@@ -48,3 +63,7 @@
         accountType: zoneRedundant ? 'Standard_GRS' : 'Standard_LRS'
       }
     }
+    
+ 
+    
+    
