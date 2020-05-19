@@ -1,9 +1,9 @@
 input securestring acrPassword
 
 variable location = 'eastus2'
-// input string size (e.g. small, med, large)
 
 // includes web/serverFarms
+// prereq: ACR instance already created
 resource mod './modules.arm@appServiceContainer' appService { // need .arm in the filepath
     name: 'lfa2'
     location: location
@@ -11,7 +11,6 @@ resource mod './modules.arm@appServiceContainer' appService { // need .arm in th
     dockerUsername: 'feldspar'
     dockerPassword: acrPassword
     dockerImageAndTag: 'lfa/frontend:latest' // {repository}:{tag} format
-    // need to declare dependency to acr here...
 }
 
 resource mod './modules.arm@sqlServerAndDb' sqlServerAndDb {
