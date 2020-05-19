@@ -1,7 +1,7 @@
 input string rgName
 input string rgLocation
 input string principalId
-input string roleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+input string roleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // [af] default values?
 input string roleAssignmentName: '${rgName}-manager'
 input string policyName
 
