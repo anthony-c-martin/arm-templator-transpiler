@@ -1,4 +1,5 @@
 input securestring acrPassword
+input securestring sqlServerPassword
 
 variable location = 'eastus2'
 
@@ -16,6 +17,6 @@ resource mod './modules.arm@appServiceContainer' appService { // need .arm in th
 resource mod './modules.arm@sqlServerAndDb' sqlServerAndDb {
     location: location
     serverName: 'lfa2'
-    password: 'P@ssw0rd12345'
+    password: sqlServerPassword
     dbName: 'db'
 }

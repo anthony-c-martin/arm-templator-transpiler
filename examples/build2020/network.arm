@@ -1,0 +1,37 @@
+module networking {
+    input string namePrefix
+    input array addressPrefixes
+    input string addressPrefix
+
+    variable location: resourceGroup().location
+
+    resource azrm 'network/virtualNetworks@2019-12-01' vnet {
+        name: concat(namePrefix, 'vnet001')
+        location: location
+        properties: {
+            addressSpace: {
+                addressPrefixes: addressPrefixes // [ '10.0.0.0/16' ]
+            }
+        }
+    }
+
+    resource azrm 'network/virtualNetworks/subnets@2019-12-01' sub1 {
+        name: concat(namePrefix, 'vnet', '/sub01')
+        properties: {
+            addressPrefix: addressPrefix // '10.0.0.0/24'
+            networkSecurityGroup: {
+                id: resourceId(nsg)
+            }
+        }
+        dependsOn: resourceId(vnet)
+    }
+
+    resource azrm 'network/networkSecurityGroups@2019-08-01' nsg {
+        name: concat(namePrefix, 'nsg')
+        location: location
+        properties: {
+            securityRules: []
+        }
+    }
+
+}

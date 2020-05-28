@@ -1,0 +1,43 @@
+variable location: 'eastus'
+variable containerName: 'aci-tutorial-app'
+variable image: 'mcr.microsoft.com/azuredocs/aci-helloworld:latest'
+
+
+variable container: {
+  name: containerName
+  properties: {
+    image: image
+    resources: {
+        requests: {
+            cpu: 1
+            memoryInGb: 1.5
+        }
+    },
+    volumeMounts: [
+        {
+            name: 'vol1'
+            mountPath: '/mnt/empty'
+        }
+    ]
+  }
+}
+
+resource azrm 'ContainerInstance/containerGroups@2018-10-01' aci {
+   location: location
+   properties: {
+     containers: [
+        container
+     ],
+     osType: 'Linux'
+     volumes: [
+        {
+            name: 'vol1'
+            azureFile: {
+                shareName: 'myshare002'
+                storageAccountName: ''
+                storageAccountKey: ''
+            }
+        }
+     ]
+   }
+}
