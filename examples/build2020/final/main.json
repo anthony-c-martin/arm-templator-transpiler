@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {},
+  "resources": [
+    {
+      "apiVersion": "2019-08-01",
+      "type": "Microsoft.network/networkSecurityGroups",
+      "name": "[concat('alex', 'nsg')]",
+      "properties": {
+        "securityRules": []
+      }
+    },
+    {
+      "apiVersion": "2019-12-01",
+      "type": "Microsoft.network/virtualNetworks",
+      "name": "[concat('alex', 'vnet')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.0.0.0/16"
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.network/virtualNetworks/subnets",
+      "name": "[concat('alex', 'vnet', '/sub01')]",
+      "properties": {
+        "addressPrefix": "10.0.0.0/24",
+        "networkSecurityGroups": "[resourceId('Microsoft.network/networkSecurityGroups', concat('alex', 'nsg'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.network/networkSecurityGroups', concat('alex', 'nsg'))]",
+        "[resourceId('Microsoft.network/virtualNetworks', concat('alex', 'vnet'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

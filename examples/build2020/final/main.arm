@@ -1,0 +1,5 @@
+resource mod './networking.arm@networking' network {
+    namePrefix: 'alex'
+    addressPrefixes: ['10.0.0.0/16']
+    addressPrefix: '10.0.0.0/24'
+}

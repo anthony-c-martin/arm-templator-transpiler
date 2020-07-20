@@ -4,7 +4,7 @@
     "variables": {
         "container1name": "aci-tutorial-app",
         "container1image": "mcr.microsoft.com/azuredocs/aci-helloworld:latest",
-        "storageName": "[uniqueString(concat(resourceGroup().id, 'alex'))]"
+        "storageName": "[uniqueString(concat(resourceGroup().id, 'alex123'))]"
     },
     "resources": [
         {
@@ -39,9 +39,9 @@
                     {
                         "name": "vol1",
                         "azureFile": {
-                            "shareName": "myShare001", // name of file share
+                            "shareName": "myshare002", // name of file share
                             "storageAccountName": "[variables('storageName')]", // storage account
-                            "storageAccountKey": "[listKeys(variables('storageName'), '2018-07-01').keys[0]]" // storage key
+                            "storageAccountKey": "[listKeys(variables('storageName'), '2018-07-01').keys[0].value]" // storage key
                         }
                     }
                 ]
@@ -52,9 +52,9 @@
             "apiVersion": "2018-07-01",
             "name": "[variables('storageName')]",
             "location": "[resourceGroup().location]",
-            "kind": "FileStorage",
+            "kind": "StorageV2",
             "sku": {
-                "name": "Premium_LRS"
+                "name": "Standard_LRS"
             },
             "properties": {
                 "accessTier": "Hot"
@@ -63,7 +63,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
             "apiVersion": "2019-04-01",
-            "name": "[concat(variables('storageName'), '/default/', 'myShare001')]",
+            "name": "[concat(variables('storageName'), '/default/', 'myshare002')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
             ]

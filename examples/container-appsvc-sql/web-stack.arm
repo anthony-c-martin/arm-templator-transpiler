@@ -1,10 +1,11 @@
-@secure
-parameter acrPassword string
+input securestring acrPassword
+input securestring sqlServerPassword
 
 variable location = 'eastus2'
 
 // includes web/serverFarms
-module appService './modules/appServiceContainer.arm' = { // need .arm in the filepath
+// prereq: ACR instance already created
+resource mod './modules.arm@appServiceContainer' appService { // need .arm in the filepath
     name: 'lfa2'
     location: location // [variables('location')]
     acrName: 'feldspar'
@@ -16,7 +17,7 @@ module appService './modules/appServiceContainer.arm' = { // need .arm in the fi
 module sqlServerAndDb './modules/sqlServerAndDb.arm' = {
     location: location
     serverName: 'lfa2'
-    password: 'P@ssw0rd12345'
+    password: sqlServerPassword
     dbName: 'db'
     someProperty: appService.outputs.websiteId
 }
