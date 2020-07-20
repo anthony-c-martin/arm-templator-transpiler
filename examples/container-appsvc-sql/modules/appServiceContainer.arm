@@ -1,0 +1,68 @@
+parameter name string
+parameter location string
+
+parameter acrName string
+parameter dockerUsername string
+parameter dockerPassword string
+parameter dockerImageAndTag string
+
+parameter environment string
+
+variable environmentSettings = {
+  dev: {
+    name: 'dev'
+  }
+  prod: {
+    name: 'prod'
+  }
+}
+
+resource site 'microsoft.web/sites@2018-11-01' = {
+  name: environmentSettings[environment].name
+  location: location
+  properties: {
+    name: name
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'DOCKER_REGISTRY_SERVER_URL'
+          value: 'https://${acrName}.azurecr.io' // 'https://almancontainerregistry.azurecr.io' 
+        }
+        {
+          name: 'DOCKER_REGISTRY_SERVER_USERNAME'
+          value: dockerUsername // parameters('dockerUsername')
+        }
+        {
+          name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
+          value: dockerPassword
+        }
+        {
+          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
+          value: 'false'
+        }
+      ]
+      linuxFxVersion: 'DOCKER|${acrName}.azurecr.io/{dockerImageAndTag}'
+    }
+    serverFarmId: resourceId(farm) // [resourceId('Microsoft.Web/serverFarms', parameter('myServerFarmName'))]
+  }
+}
+
+resource farm 'microsoft.web/serverFarms@2018-11-01' = {
+  name: name
+  location: location
+  sku: {
+    name: 'B1'
+    tier: 'Basic'
+  }
+  kind: 'linux' // if kind=app -> windows
+  properties: {
+    name: name
+    workerSize: '0'
+    workerSizeId: '0'
+    numberOfWorkers: '1'
+    reserved: true // true does not get passed through, but "true" does...
+  }
+}
+
+output websiteId string = site.someGetOnlyProperty
+
