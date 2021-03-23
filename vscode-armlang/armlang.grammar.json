@@ -1,158 +1,230 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "ArmLang",
-	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		},
-		{
-			"include": "#properties"
-		},
-		{
-			"include": "#functions"
-		},
-		{
-			"include": "#comments"
-		}
-	],
-	"repository": {
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.armlang",
-				"match": "\\b(resource|module|variable|export|input|output|for|in|if|else)\\b"
-			}, {
-				"name": "keyword.bundle.armlang",
-				"match": "\\b(azrm|mod)\\b"
-			}, {
-				"name": "keyword.type.armlang",
-				"match": "\\b(string|securestring|int|bool|object|array)\\b"
-			}]
-		},
-		"strings": {
-			"name": "string.quoted.single.armlang",
-			"begin": "'",
-			"end": "'",
-			"patterns": [
-				{
-					"name": "constant.character.escape.armlang",
-					"match": "(?x)\\\\(?:[\"\\\\/bfnrt$]|[0-9a-fA-F]{4})"
-				},
-				{
-					"include": "#stringinterp"
-				},
-                {
-                    "match": "\\\\.",
-                    "name": "invalid.illegal.unrecognized-string-escape.armlang"
-                }
-			]
-		},
-		"stringinterp": {
-			"begin": "\\$\\{",
-			"end": "\\}",
-			"beginCaptures": {
-				"0": {
-					"name": "punctuation.definition.template-expression.begin.armlang"
-				}
-			},
-			"endCaptures": {
-				"0": {
-					"name": "punctuation.definition.template-expression.end.armlang"
-				}
-			},
-			"name": "meta.embedded.block",
-			"patterns": [
-				{
-					"include": "#functions"
-				},
-				{
-					"include": "#identifiers"
-				},
-				{
-					"name": "invalid.illegal.expected-expression.armlang",
-					"match": "[^\\s]"
-				}
-			]
-		},
-		"identifiers": {
-			"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\w*\\b",
-			"captures": {
-				"1": {
-					"name": "variable.other.identifier.armlang"
-				}
-			}
-		},
-		"properties": {
-			"match": "\\b([a-zA-Z][a-zA-Z0-9]*)\\w*\\b:",
-			"captures": {
-				"1": {
-					"name": "support.type.property-name.armlang"
-				}
-			}
-		},
-		"functions": {
-			"begin": "\\b([a-zA-Z][a-zA-Z0-9]*)\\w*\\(\\b",
-			"end": "\\)",
-			"beginCaptures": {
-				"1": {
-					"name": "support.function.armlang"
-				}
-			},
-			"patterns": [
-				{
-					"include": "#functions"
-				},
-				{
-					"include": "#identifiers"
-				},
-				{
-					"include": "#strings"
-				},
-                {
-                    "match": ",",
-                    "name": "punctuation.separator.function.armlang"
-                },
-				{
-					"name": "invalid.illegal.expected-expression.armlang",
-					"match": "[^\\s]"
-				}
-			]
-		},
-        "comments": {
-            "patterns": [
-                {
-                    "begin": "/\\*\\*(?!/)",
-                    "captures": {
-                        "0": {
-                            "name": "punctuation.definition.comment.armlang"
-                        }
-                    },
-                    "end": "\\*/",
-                    "name": "comment.block.documentation.armlang"
-                },
-                {
-                    "begin": "/\\*",
-                    "captures": {
-                        "0": {
-                            "name": "punctuation.definition.comment.armlang"
-                        }
-                    },
-                    "end": "\\*/",
-                    "name": "comment.block.armlang"
-                },
-                {
-                    "captures": {
-                        "1": {
-                            "name": "punctuation.definition.comment.armlang"
-                        }
-                    },
-                    "match": "(//).*$\\n?",
-                    "name": "comment.line.double-slash.js"
-                }
-            ]
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "ArmLang",
+  "version": "...",
+  "scopeName": "source.armlang",
+  "patterns": [
+    {
+      "include": "#statements"
+    }
+  ],
+  "variables": {
+    "identifier": "[_$[:alpha:]][_$[:alnum:]]*"
+  },
+  "repository": {
+    "statements": {
+      "patterns": [
+        {
+          "include": "#declaration"
+        },
+        {
+          "include": "#comments"
         }
-	},
-	"scopeName": "source.armlang"
+      ]
+    },
+    "declaration": {
+      "patterns": [
+        {
+          "include": "#targetscope-declaration"
+        },
+        {
+          "include": "#resource-declaration"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.bicep",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.comment.bicep"
+            }
+          }
+        },
+        {
+          "name": "comment.line.double-slash.bicep",
+          "match": "(//).*$\\n?",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.comment.bicep"
+            }
+          }
+        }
+      ]
+    },
+    "targetscope-declaration": {
+      "begin": "^\\s*(targetScope)\\s+=\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.declaration.bicep"
+        }
+      },
+      "end": "\\s*$",
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "resource-declaration": {
+      "begin": "^\\s*(resource)\\s+({{identifier}})(\\s+existing|)\\s+=\\s+(?=\\{)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.declaration.bicep"
+        },
+        "2": {
+          "name": "variable.language.bicep"
+        },
+        "3": {
+          "name": "keyword.control.declaration.bicep"
+        }
+      },
+      "end": "(?<=^\\s*\\})\\s*$",
+      "patterns": [
+        {
+          "include": "#object"
+        }
+      ]
+    },
+    "expression": {
+      "patterns": [
+        {
+          "include": "#string"
+        },
+        {
+          "include": "#number"
+        },
+        {
+          "include": "#constant"
+        },
+        {
+          "include": "#array"
+        },
+        {
+          "include": "#object"
+        }
+      ]
+    },
+    "identifier": {
+      "name": "meta.definition.property.ts",
+      "match": "[_$[:alpha:]][_$[:alnum:]]*"
+    },
+    "string": {
+      "name": "string.quoted.single.bicep",
+      "begin": "'",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.bicep"
+        }
+      },
+      "end": "(\\')|((?:[^\\\\\\n])$)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.end.bicep"
+        },
+        "2": {
+          "name": "invalid.illegal.newline.bicep"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
+    },
+    "string-character-escape": {
+      "name": "constant.character.escape.bicep",
+      "match": "\\\\(u[0-9A-Fa-f]{6}|n|r|t|\\\\|\\')"
+    },
+    "number": {
+      "patterns": [
+        {
+          "name": "constant.numeric.decimal.bicep",
+          "match": "[0-9]+",
+          "captures": {
+            "0": {
+              "name": "storage.type.numeric.decimal.bicep"
+            }
+          }
+        }
+      ]
+    },
+    "array": {
+      "name": "meta.array.literal.bicep",
+      "begin": "\\s*(\\[)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.brace.square.bicep"
+        }
+      },
+      "end": "^\\s*(\\])",
+      "endCaptures": {
+        "1": {
+          "name": "meta.brace.square.bicep"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "object": {
+      "name": "meta.object.literal.bicep",
+      "begin": "\\s*(\\{)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.bicep"
+        }
+      },
+      "end": "^\\s*(\\})",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.bicep"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#object-property"
+        }
+      ]
+    },
+    "object-property": {
+      "patterns": [
+        {
+          "include": "#string"
+        },
+        {
+          "match": "[_$[:alpha:]][_$[:alnum:]]*",
+          "captures": {
+            "0": {
+              "name": "meta.definition.property.bicep"
+            }
+          }
+        },
+        {
+          "name": "meta.structure.dictionary.value.bicep",
+          "begin": ":",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.separator.dictionary.key-value.bicep"
+            }
+          },
+          "end": "\\s*$",
+          "patterns": [
+            {
+              "include": "#expression"
+            }
+          ]
+        }
+      ]
+    },
+    "constant": {
+      "name": "constant.language.bicep",
+      "match": "\\b(?:true|false|null)\\b"
+    }
+  }
 }

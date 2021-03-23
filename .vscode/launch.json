@@ -1,0 +1,16 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "Bicep VSCode Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--enable-proposed-api",
+                "--extensionDevelopmentPath=${workspaceRoot}/vscode-armlang"
+            ],
+            "preLaunchTask": "convert"
+        }
+    ]
+}

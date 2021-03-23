@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "convert",
+            "path": "vscode-armlang/",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "convert"
+        }
+    ]
+}P

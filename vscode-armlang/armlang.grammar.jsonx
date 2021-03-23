@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "ArmLang",
+  "version": "...",
+  "scopeName": "source.bicep",
+  "patterns": [
+    {
+      "include": "#statements"
+    }
+  ],
+  "repository": {
+    "statements": {
+      "patterns": [
+        {
+          "include": "#declaration"
+        }
+      ]
+    },
+    "declaration": {
+      "patterns": [
+        {
+          "include": "#targetscope-declaration"
+        }
+      ]
+    },
+    "targetscope-declaration": {
+      "begin": "^\\s*(targetScope)\\s+=\\s+",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.declaration.bicep"
+        }
+      },
+      "end": "\\s*$",
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "expression": {
+      "begin": "\\'",
+      "end": "\\'"
+    }
+  }
+}
